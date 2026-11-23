@@ -1,8 +1,20 @@
 # RadiusCore
 
-RadiusCore is the Rust RADIUS access, session accounting and IP resource layer. RadiusT owns subscriber service management and SystemT owns financial billing.
+![RadiusCore — RADIUS AAA, IPAM, and accounting](docs/assets/radiuscore-banner.jpg)
 
-This source snapshot implements bounded legacy RADIUS framing and Option 82 decoding, configurable Rust rewrite rules and guarded lookup, IP prefix arithmetic and reply attributes, and the PostgreSQL core schema, dictionary, IP assignment lifecycle, and resolved accounting transaction. The CLI exposes offline diagnostics. Runtime transport authentication and UDP/TLS listeners, NAS policy provisioning, live Rust-to-PostgreSQL access/accounting, and the cluster/controller path are pending. See the engineering blueprint for the complete product design.
+Rust components for RADIUS authentication, authorization, and accounting (AAA), with PostgreSQL-backed IP address management and session accounting. RadiusT manages subscriber services, and SystemT owns billing.
+
+## Project status
+
+**v0.1.0 is a development snapshot for lab use.** The Rust code implements legacy RADIUS packet framing, DHCP Option 82 decoding, rewrite rules with guarded lookup, IP prefix calculation, reply attribute encoding, and offline diagnostics. The PostgreSQL migrations cover IPv4 and IPv6 allocation and resolved session accounting. The live UDP/TLS server, NAS provisioning, database runtime integration, and clustering are still in development.
+
+| What you want to do | Where to start |
+|---|---|
+| Understand the design and deployment plan | [Engineering blueprint](docs/engineering-blueprint.md) |
+| Reproduce the FreeRADIUS and Option 82 checks | [Option 82 interoperability](docs/option82-interop.md) |
+| Inspect address assignment and accounting | [IPAM migration](migrations/0003_ipam.sql) · [Accounting migration](migrations/0004_accounting.sql) |
+| Report a bug or propose a change | [Contributing](CONTRIBUTING.md) · [Issues](https://github.com/tishriclarin/radiuscore/issues) |
+| Report a security issue | [Security policy](SECURITY.md) |
 
 ## Build and test
 

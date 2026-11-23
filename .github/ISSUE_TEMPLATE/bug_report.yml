@@ -1,0 +1,22 @@
+name: Bug report
+description: Report reproducible behavior in RadiusCore
+body:
+  - type: input
+    id: version
+    attributes:
+      label: RadiusCore version or commit
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include operating system, PostgreSQL version, and NAS model or firmware if relevant. Remove secrets and subscriber data.
+    validations:
+      required: true
