@@ -2,7 +2,19 @@
 
 ![RadiusCore — RADIUS AAA, IPAM, and accounting](docs/assets/radiuscore-banner.jpg)
 
-Rust components for RADIUS authentication, authorization, and accounting (AAA), with PostgreSQL-backed IP address management and session accounting. RadiusT manages subscriber services, and SystemT owns billing.
+RadiusCore is a Rust RADIUS AAA project for ISPs that need to turn vendor-specific access requests into a consistent subscriber identity, IPv4 or IPv6 assignment, and session record. RadiusT manages subscriber services, and SystemT owns billing.
+
+## What RadiusCore is trying to solve
+
+An ISP can receive the same kind of access request through different NAS and access networks. One device may encode an Option 82 circuit ID as binary, another as text. In one rollout, the resulting subscriber identity must agree with the IP assignment and with the accounting record even when a request is retried or arrives late. RadiusCore is designed to keep these decisions consistent across sites.
+
+- **Normalize before lookup.** Apply vendor-specific rules to identifiers such as Option 82 circuit ID, remote ID, and caller ID. If a required rewrite fails, stop before subscriber lookup.
+- **Keep IP assignments consistent.** Use one PostgreSQL model for host addresses, delegated IPv6 prefixes, and routed blocks. Reject overlapping active assignments within a routing space and reuse the existing assignment on a matching retry.
+- **Record reliable session history.** Preserve accounting events and update the session in one transaction. Duplicate events and late interim records follow explicit rules without reopening a closed session.
+
+## How it differs
+
+[FreeRADIUS](https://www.freeradius.org/radiusd/man/unlang.html) provides configurable packet policy through Unlang and [SQL address pools](https://www.networkradius.org/doc/current/raddb/mods-available/sqlippool.html). [Radiator](https://files.radiatorsoftware.com/radiator/ref/AuthByDYNADDRESS.html) also supports SQL-backed IPv4 address and IPv6 prefix allocation. RadiusCore's distinction is its focus on one ISP workflow: run vendor-specific identity normalization before lookup, allocate resources within a shared routing-space model, and keep accounting consistent with that session. The design also calls for versioned operator configuration with commit and rollback.
 
 ## Project status
 
