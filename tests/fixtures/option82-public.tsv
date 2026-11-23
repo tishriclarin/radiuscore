@@ -1,0 +1,5 @@
+# Source extract | encoding | supplied value | expected byte string
+routeros-forum-circuit	hex	0x500000020005	500000020005
+routeros-forum-remote	hex	0x4d595f41505f31	4d595f41505f31
+legacy-freeradius-remote	octal	\000\006\000\r\355!\244\200	0006000ded21a480
+legacy-freeradius-circuit-as-printed	octal	\000\004\000\002\000	0004000200

@@ -1,0 +1,39 @@
+name: CI
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo fmt --check
+      - run: cargo test --locked
+      - run: cargo build --locked --release
+
+  postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: radiuscore-ci
+          POSTGRES_DB: radiuscore_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d radiuscore_ci"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: radiuscore-ci
+      PGDATABASE: radiuscore_ci
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/test-postgres.sh
