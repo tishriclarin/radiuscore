@@ -3,8 +3,8 @@
 
 use crate::rewrite::{self, Received};
 
-const HEADER_BYTES: usize = 20;
-const MAX_PACKET_BYTES: usize = 4096;
+pub(crate) const HEADER_BYTES: usize = 20;
+pub(crate) const MAX_PACKET_BYTES: usize = 4096;
 const VENDOR_SPECIFIC: u8 = 26;
 const CALLING_STATION_ID: u8 = 31;
 const DSL_FORUM_PEN: [u8; 4] = 3561u32.to_be_bytes();

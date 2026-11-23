@@ -18,10 +18,13 @@ An ISP can receive the same kind of access request through different NAS and acc
 
 ## Project status
 
-**v0.1.0 is a development snapshot for lab use.** The Rust code implements legacy RADIUS packet framing, DHCP Option 82 decoding, rewrite rules with guarded lookup, IP prefix calculation, reply attribute encoding, and offline diagnostics. The PostgreSQL migrations cover IPv4 and IPv6 allocation and resolved session accounting. The live UDP/TLS server, NAS provisioning, database runtime integration, and clustering are still in development.
+The [transport security library](docs/transport-security.md) now provides mutual-TLS RadSec connection primitives, a TLS peer probe, and strict legacy UDP Access-Request verification.
+
+**v0.1.0 is a development snapshot for lab use.** The Rust code implements legacy RADIUS packet framing, DHCP Option 82 decoding, rewrite rules with guarded lookup, IP prefix calculation, reply attribute encoding, and offline diagnostics. The PostgreSQL migrations cover IPv4 and IPv6 allocation and resolved session accounting. The live UDP/TLS AAA server, NAS provisioning, database runtime integration, and clustering are still in development.
 
 | What you want to do | Where to start |
 |---|---|
+| Check TLS peer connectivity and security scope | [Transport security](docs/transport-security.md) |
 | Understand the design and deployment plan | [Engineering blueprint](docs/engineering-blueprint.md) |
 | Reproduce the FreeRADIUS and Option 82 checks | [Option 82 interoperability](docs/option82-interop.md) |
 | Inspect address assignment and accounting | [IPAM migration](migrations/0003_ipam.sql) · [Accounting migration](migrations/0004_accounting.sql) |
@@ -29,6 +32,8 @@ An ISP can receive the same kind of access request through different NAS and acc
 | Report a security issue | [Security policy](SECURITY.md) |
 
 ## Build and test
+
+Requires Rust 1.80+, system OpenSSL development libraries, and the OpenSSL CLI for transport tests.
 
 ```sh
 cargo test --locked
