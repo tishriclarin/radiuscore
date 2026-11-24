@@ -14,3 +14,10 @@ path = "src/lib.rs"
 [[bin]]
 name = "radiuscore"
 path = "src/main.rs"
+
+[dev-dependencies]
+serde_json = "1"
+
+[[example]]
+name = "network-simulation"
+path = "simulation/main.rs"

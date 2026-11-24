@@ -1,3 +1,4 @@
+pub mod admission;
 pub mod integrity;
 pub mod ipam;
 pub mod option82;

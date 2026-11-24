@@ -26,6 +26,7 @@ The [transport security library](docs/transport-security.md) now provides mutual
 |---|---|
 | Check TLS peer connectivity and security scope | [Transport security](docs/transport-security.md) |
 | Learn why RadiusCore exists and what it targets | [Project rationale](docs/project-rationale.md) |
+| Run the network and database scenarios | [Network simulation](simulation/README.md) |
 | Find commands, examples, and troubleshooting | [Operator CLI](docs/operator-cli.md) |
 | Work on the Rust service and PostgreSQL schema | [Developer guide](docs/developer-guide.md) |
 | Understand the design and deployment plan | [Engineering blueprint](docs/engineering-blueprint.md) |

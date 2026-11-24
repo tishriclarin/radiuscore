@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+exec cargo run --quiet --locked --manifest-path "$root/Cargo.toml" --example network-simulation -- "$@"

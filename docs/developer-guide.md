@@ -20,7 +20,7 @@ For PostgreSQL checks, provision a **fresh disposable database** on PostgreSQL 1
 PGDATABASE=radiuscore_test ./scripts/test-postgres.sh
 ```
 
-The script runs the migrations and checks allocation, leases, accounting projection, concurrency and retry behavior. These tests write into the selected database.
+The script runs the migrations and checks allocation, leases, accounting projection, concurrency and retry behavior. It also runs the [network simulation](../simulation/README.md) and emits expected-versus-actual JSON for packet, rate-limit, accounting and admission cases. These tests write into the selected database.
 
 ## Source map
 
