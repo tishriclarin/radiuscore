@@ -24,10 +24,21 @@ fn main() -> ExitCode {
 }
 
 fn run(args: &[String]) -> Result<(), String> {
+    if let [command, path @ ..] = args {
+        if command == "help" {
+            return print_help(path);
+        }
+    }
+    if let Some((flag, path)) = args.split_last() {
+        if matches!(flag.as_str(), "--help" | "-h") {
+            return print_help(path);
+        }
+    }
     match args {
-        [] => print_help(),
-        [flag] if flag == "--help" => print_help(),
-        [flag] if flag == "--version" => println!("radiuscore {}", env!("CARGO_PKG_VERSION")),
+        [] => return print_help(&[]),
+        [flag] if matches!(flag.as_str(), "--version" | "-V") => {
+            println!("radiuscore {}", env!("CARGO_PKG_VERSION"));
+        }
         [group, cmd, value] if group == "ip" && cmd == "parse" => {
             let prefix = value
                 .parse::<Prefix>()
@@ -126,10 +137,50 @@ fn probe_radsec(
     Ok(())
 }
 
-fn print_help() {
-    println!("radiuscore ip parse <network/cidr>");
-    println!("radiuscore radsec probe <IP:port> <server-name> <ca.pem> <cert.pem> <key.pem> <sha256-pin>");
-    println!("radiuscore option82 normalize-log <0xhex-or-escaped-text>");
-    println!("radiuscore option82 decode-dhcp <hex-option-payload>");
-    println!("radiuscore option82 decode-radius <binary-datagram>");
+fn print_help(path: &[String]) -> Result<(), String> {
+    let usage = match path {
+        [] => concat!(
+            "RadiusCore diagnostic CLI\n\n",
+            "  radiuscore ip <command>          Validate IP prefixes\n",
+            "  radiuscore option82 <command>    Inspect Option 82 values\n",
+            "  radiuscore radsec <command>      Verify a RadSec TLS peer\n",
+            "  radiuscore help [group [command]]\n",
+            "  radiuscore --version\n\n",
+            "Append --help to a group or command for details.\n",
+            "Operator guide: https://github.com/tishriclarin/radiuscore/blob/main/docs/operator-cli.md"
+        ),
+        [group] if group == "ip" => "radiuscore ip parse <network/cidr>",
+        [group, command] if group == "ip" && command == "parse" => concat!(
+            "radiuscore ip parse <network/cidr>\n\n",
+            "Validate and print an IPv4 or IPv6 network with host bits cleared."
+        ),
+        [group] if group == "option82" => concat!(
+            "radiuscore option82 normalize-log <0xhex-or-escaped-text>\n",
+            "radiuscore option82 decode-dhcp <hex-option-payload>\n",
+            "radiuscore option82 decode-radius <binary-datagram>"
+        ),
+        [group, command] if group == "option82" && command == "normalize-log" => concat!(
+            "radiuscore option82 normalize-log <0xhex-or-escaped-text>\n\n",
+            "Print log-escaped or 0x-prefixed input as lowercase hexadecimal."
+        ),
+        [group, command] if group == "option82" && command == "decode-dhcp" => concat!(
+            "radiuscore option82 decode-dhcp <hex-option-payload>\n\n",
+            "Decode the DHCP Option 82 payload after removing its outer option header."
+        ),
+        [group, command] if group == "option82" && command == "decode-radius" => concat!(
+            "radiuscore option82 decode-radius <binary-datagram>\n\n",
+            "Read one raw RADIUS datagram from a file and print recognized Option 82 IDs."
+        ),
+        [group] if group == "radsec" => {
+            "radiuscore radsec probe <IP:port> <server-name> <ca.pem> <cert.pem> <key.pem> <sha256-pin>"
+        }
+        [group, command] if group == "radsec" && command == "probe" => concat!(
+            "radiuscore radsec probe <IP:port> <server-name> <ca.pem> <cert.pem> <key.pem> <sha256-pin>\n\n",
+            "Verify a mutual TLS connection using a 64-digit hexadecimal peer certificate pin.\n",
+            "This probe sends no RADIUS request."
+        ),
+        _ => return Err("unknown help topic; use radiuscore --help".into()),
+    };
+    println!("{usage}");
+    Ok(())
 }

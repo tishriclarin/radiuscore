@@ -2,7 +2,7 @@
 
 ![RadiusCore — RADIUS AAA, IPAM, and accounting](docs/assets/radiuscore-banner.jpg)
 
-RadiusCore is a Rust RADIUS AAA project for ISPs that need to turn vendor-specific access requests into a consistent subscriber identity, IPv4 or IPv6 assignment, and session record. RadiusT manages subscriber services, and SystemT owns billing.
+RadiusCore is a Rust RADIUS AAA project for ISPs that need to turn vendor-specific access requests into a consistent subscriber identity, IPv4 or IPv6 assignment, and session record. RadiusT manages subscriber services, and SystemT owns billing. RadiusCore focuses on performance and operational simplicity for a defined set of network devices and attributes. See [why RadiusCore was built](docs/project-rationale.md).
 
 ## What RadiusCore is trying to solve
 
@@ -25,6 +25,9 @@ The [transport security library](docs/transport-security.md) now provides mutual
 | What you want to do | Where to start |
 |---|---|
 | Check TLS peer connectivity and security scope | [Transport security](docs/transport-security.md) |
+| Learn why RadiusCore exists and what it targets | [Project rationale](docs/project-rationale.md) |
+| Find commands, examples, and troubleshooting | [Operator CLI](docs/operator-cli.md) |
+| Work on the Rust service and PostgreSQL schema | [Developer guide](docs/developer-guide.md) |
 | Understand the design and deployment plan | [Engineering blueprint](docs/engineering-blueprint.md) |
 | Reproduce the FreeRADIUS and Option 82 checks | [Option 82 interoperability](docs/option82-interop.md) |
 | Inspect address assignment and accounting | [IPAM migration](migrations/0003_ipam.sql) · [Accounting migration](migrations/0004_accounting.sql) |
