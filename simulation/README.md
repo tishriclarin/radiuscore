@@ -13,6 +13,35 @@ The plain invocation reports local results and marks PostgreSQL skipped. For the
 
 Standard output from the simulation is JSON with overall `status`, a summary, and each test's `expected`, `actual`, and `status`. A failed comparison or database run exits nonzero. A local run with PostgreSQL skipped reports `partial`. Build errors occur before the reporting executable starts.
 
+
+## Test IDs, journal, and replay
+
+Each completed run prints a unique lowercase 16-digit hexadecimal `test_id` and keeps the same JSON report in the local journal. A shorter hexadecimal prefix works when it matches exactly one run. A seed selects fixture ordering, while a test ID identifies a recorded run and its snapshots.
+
+| Arguments | Selection |
+|---|---|
+| `--seed 27` | Run the current suite with seed 27. This does not load prior history. |
+| `--extend <test-id>` | Run the current tests in the recorded run's test groups. An explicit `--database` can add PostgreSQL coverage. The prior seed is used unless overridden or a configuration is restored. |
+| `--rerun <test-id>` | Replay the prior test groups using current tests and settings. The default restore option is `none`. |
+| `--rerun-opt none` | Keep the existing database and current simulation settings. |
+| `--rerun-opt config` | Restore the recorded runner settings for this invocation. An explicit seed overrides the recorded seed. |
+| `--rerun-opt db` | Restore the database from the beginning of the referenced run. Use current simulation settings. |
+| `--rerun-opt db-config` | Restore both the database and the simulation settings from the referenced run. |
+| `--clear` | Back up the existing database, replace the public application schema, apply the current migrations, then run the tests. |
+| `--journal` | Print the run journal without executing tests. |
+
+`--extend` and `--rerun` can be combined. When both are supplied, the runner announces on stderr and in the JSON report that **extend selects the tests**. Rerun supplies the snapshots requested by `--rerun-opt`. If `--clear` is combined with a database restore, one backup captures the pre-change state and the restored snapshot is the starting point. Test assertions run from the current checkout. Use the corresponding historical checkout if you also need to reproduce older test code.
+
+```sh
+PGDATABASE=radiuscore_test ./simulation/run.sh --database --seed 27 --extend 3ac332 > result.json
+PGDATABASE=radiuscore_test ./simulation/run.sh --extend 3ac332 --rerun 7fd701 --rerun-opt db-config
+./simulation/run.sh --journal
+```
+
+The example IDs stand for runs in your local journal. The default state directory is `simulation/.state`. Override it with `RADIUSCORE_SIM_STATE`. Each run has `journal/<id>/settings.json` and `journal/<id>/result.json`. Database runs snapshot their input state as `db-backup/<id>/input.dump`. A clear or restore also preserves `db-backup/<id>/before-change.dump` before changing the database. The stored settings cover the runner seed and selected groups. The dump captures the database, including its application configuration rows. Connection credentials and external service configuration files are outside this snapshot.
+
+Use a dedicated database named `radiuscore_test` or `radiuscore_test_*` (`radiuscore_ci` is reserved for CI). The lab must have only the public application schema. Use compatible PostgreSQL client tools (`psql`, `pg_dump`, and `pg_restore`) and a role that can back up and replace that schema when requested. Clear and restore apply their SQL in a single transaction. Restores require the same recorded database identity. Keep the lab exclusive during snapshot operations. The state directory is ignored by Git and may contain database data. A terminated process can leave `active-run.lock`; remove it only after verifying no process is using that journal or database.
+
 ## Coverage
 
 | Scenario | Expected behavior |

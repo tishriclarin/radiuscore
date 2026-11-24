@@ -12,3 +12,4 @@ psql -X -v ON_ERROR_STOP=1 -f "$project_dir/tests/ipam.sql"
 psql -X -v ON_ERROR_STOP=1 -f "$project_dir/tests/accounting.sql"
 python3 "$project_dir/tests/ipam_concurrency.py"
 "$project_dir/simulation/run.sh" --database --seed 27
+"$project_dir/simulation/history-test.sh"

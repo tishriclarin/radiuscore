@@ -1,3 +1,5 @@
+mod history;
+
 use std::{
     env,
     num::NonZeroU32,
@@ -192,61 +194,9 @@ fn database_cases(seed: u32, out: &mut Vec<Value>) -> Result<(), String> {
     Ok(())
 }
 
-fn run() -> Result<bool, String> {
-    let mut seed: u32 = 27;
-    let mut db = false;
-    let mut args = env::args().skip(1);
-    while let Some(arg) = args.next() {
-        match arg.as_str() {
-            "--database" => db = true,
-            "--seed" => {
-                seed = args
-                    .next()
-                    .ok_or("missing --seed value")?
-                    .parse()
-                    .map_err(|_| "--seed requires an unsigned 32-bit integer")?;
-            }
-            _ => return Err(format!("unknown argument: {arg}")),
-        }
-    }
-
-    let mut tests = Vec::new();
-    local_cases(&mut tests);
-    if db {
-        if let Err(error) = database_cases(seed, &mut tests) {
-            case(
-                &mut tests,
-                "postgresql_execution",
-                json!("completed"),
-                json!(error),
-            );
-        }
-    }
-    let failed = tests
-        .iter()
-        .filter(|test| test["status"] == "failed")
-        .count();
-    let status = if failed != 0 {
-        "failed"
-    } else if db {
-        "passed"
-    } else {
-        "partial"
-    };
-    println!("{}", serde_json::to_string_pretty(&json!({
-        "status": status,
-        "seed": seed,
-        "scope": "in-process packet, admission, and optional PostgreSQL simulation",
-        "summary": {"passed": tests.len()-failed, "failed": failed, "skipped_groups": if db {vec![]} else {vec!["postgresql"]}},
-        "tests": tests,
-    })).expect("JSON report is serializable"));
-    Ok(failed == 0)
-}
-
 fn main() -> ExitCode {
-    match run() {
-        Ok(true) => ExitCode::SUCCESS,
-        Ok(false) => ExitCode::FAILURE,
+    match history::execute() {
+        Ok(code) => code,
         Err(error) => {
             println!(
                 "{}",
