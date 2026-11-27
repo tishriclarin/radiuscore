@@ -10,6 +10,12 @@
 - Candidate edits, commit, autocommit, and rollback operate on a versioned configuration manifest. The same manifest carries vendor defaults, peer bindings, rules, access policies, and cluster-wide settings. Local filesystem configuration supplies node-specific startup and recovery details.
 - A compact PostgreSQL model uses relational columns for fields that need constraints or indexes. JSONB is used for the versioned manifest and provisioned identity selectors whose fields vary by keyspace. SQL types reflect actual ranges. A limit of 200 values is stored in `smallint` with a `CHECK`; PostgreSQL's built-in integers start at two bytes.
 
+## Axion CLI management backlog
+
+- [ ] Add a versioned service manifest and an authenticated local management interface for Axion CLI.
+- [ ] Verify installation through Axion CLI, management permission changes and revocation, and license handling where applicable.
+- [ ] Test that Axion or AccordT outages keep the management interface out of the live AAA request path and that the service follows its documented offline entitlement policy.
+
 ## Product and table ownership
 
 The dependency direction is **SystemT → RadiusT → RadiusCore**. Each product owns its writes and publishes commands or events for the layer above. RadiusCore can run independently. RadiusT can manage subscribers and receive payments without SystemT. The RADIUS packet path reads RadiusCore's compiled state only. If a required rewrite fails, it makes zero access-account or backend lookup calls.
